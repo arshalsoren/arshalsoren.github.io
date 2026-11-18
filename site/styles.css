@@ -91,10 +91,28 @@ a:focus-visible {
   margin: 0;
 }
 
-/* each command is a block of its own, full width */
+/* each command is a block of its own, full width.
+   .stage is pinned to the middle of the screen while the command runs;
+   .run-space is the scroll distance that drives the run. Without JavaScript
+   (or with reduced motion) the stage is ordinary flow and run-space is 0. */
 .step {
-  padding: 8vh 0 6vh;
   border-top: 1px solid var(--line);
+}
+
+.stage {
+  padding: 8vh 0 6vh;
+  background: var(--bg);
+}
+
+.run-space { height: 0; }
+
+.js-live .stage {
+  position: sticky;
+  top: 50vh;
+}
+
+.js-live .run-space {
+  height: 90vh;
 }
 
 .cmd {

@@ -19,10 +19,11 @@
     window.location.href = href;
   });
 
-  // Scroll-linked session. Each command runs as its block moves up the screen:
-  // it types during the first half of the run, then its results appear one by
-  // one. Nothing moves unless the reader scrolls. Progress never goes back, so
-  // a reader who scrolls up again does not see the text disappear.
+  // Scroll-linked session. When a command's block reaches the middle of the
+  // screen, its stage pins there. While it stays pinned, the command types and
+  // its results appear, driven by scroll. Once the run is done, the stage
+  // scrolls on normally. Nothing moves unless the reader scrolls. Progress never
+  // goes back, so scrolling up does not hide text already shown.
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const steps = [...document.querySelectorAll(".step")];
   if (reduceMotion || steps.length === 0) return;
@@ -36,6 +37,7 @@
     step.typed = step.querySelector(".typed");
     step.cursor = step.querySelector(".cmd");
     step.items = [...step.querySelector(".out").children];
+    step.runSpace = step.querySelector(".run-space");
     step.progress = 0;
     step.typed.textContent = "";
     step.items.forEach((el) => el.classList.remove("shown"));
@@ -57,16 +59,16 @@
     });
   }
 
+  // The stage pins when the step's top edge passes the middle of the screen.
+  // The run then lasts for the step's run-space, so progress is how far the
+  // step has moved past the middle, measured against that run-space.
   function update() {
     queued = false;
-    const vh = window.innerHeight;
-    // The command starts typing as its line nears the middle of the screen and
-    // is complete, with its results, when it sits exactly in the middle.
-    const runStart = vh * 0.95;
-    const runEnd = vh * 0.5;
+    const middle = window.innerHeight * 0.5;
     for (const step of steps) {
-      const top = step.cursor.getBoundingClientRect().top;
-      const p = clamp((runStart - top) / (runStart - runEnd), 0, 1);
+      const top = step.getBoundingClientRect().top;
+      const run = step.runSpace.offsetHeight;
+      const p = run > 0 ? clamp((middle - top) / run, 0, 1) : (top <= middle ? 1 : 0);
       if (p > step.progress) step.progress = p;
       render(step);
     }
