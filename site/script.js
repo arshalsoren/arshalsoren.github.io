@@ -62,7 +62,7 @@
     const vh = window.innerHeight;
     // The command starts typing as its line nears the middle of the screen and
     // is complete, with its results, when it sits exactly in the middle.
-    const runStart = vh * 1.4;
+    const runStart = vh * 0.95;
     const runEnd = vh * 0.5;
     for (const step of steps) {
       const top = step.cursor.getBoundingClientRect().top;
