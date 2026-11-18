@@ -4,36 +4,134 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Arshal Soren — backend software engineer</title>
-  <meta name="description" content="Arshal Soren, backend software engineer. Experience, projects, skills, and contact, in a terminal.">
+  <meta name="description" content="Arshal Soren, backend software engineer. Experience, projects, skills, and contact.">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <main class="window" aria-label="Terminal">
+  <main class="window">
     <header class="titlebar">
       <span class="dot dot-close" aria-hidden="true"></span>
       <span class="dot dot-min" aria-hidden="true"></span>
       <span class="dot dot-max" aria-hidden="true"></span>
-      <span class="title">arshal@soren: ~</span>
+      <span class="title">arshalsoren: ~</span>
     </header>
 
-    <div id="output" class="output" role="log" aria-live="polite">
-      <noscript>
-        <p>This terminal needs JavaScript for commands. The content is also available in plain form below.</p>
-        <pre>
-Arshal Soren, backend software engineer.
-Experience:  Trackier (Software Engineer II, Apr 2026 - Oct 2026; Software Engineer, Dec 2022 - Mar 2026)
-             Byju's (Software Engineer, Jul 2022 - Nov 2022)
-Projects:    topd (macOS menu bar system monitor)  https://github.com/arshalsoren/topd
-Contact:     arshalsoren@gmail.com  https://linkedin.com/in/arshalsoren  https://github.com/arshalsoren
-Resume:      arshal-soren-resume.pdf
-        </pre>
-      </noscript>
+    <div class="page">
+      <section class="intro" id="top">
+        <h1>Arshal Soren</h1>
+        <p class="lead">Backend software engineer. I design, build, and operate scalable, high-availability services and APIs, and I care about the performance, reliability, and observability of distributed platforms.</p>
+        <p class="meta">
+          <a href="#contact">Contact</a> ·
+          <a href="arshal-soren-resume.pdf">Resume (PDF)</a> ·
+          <a href="https://github.com/arshalsoren" target="_blank" rel="noopener noreferrer">GitHub</a> ·
+          <a href="https://linkedin.com/in/arshalsoren" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        </p>
+      </section>
+
+      <section id="about">
+        <h2><span class="path">~/about</span></h2>
+        <p>Four years of backend work across PHP, Go, Node.js, and TypeScript, on systems that handle large daily traffic. I work closely with product and DevOps, and I like making systems easier to run: better caching, clearer observability, and less manual operations work.</p>
+      </section>
+
+      <section id="experience">
+        <h2><span class="path">~/experience</span></h2>
+
+        <article class="entry">
+          <h3>Trackier — Software Engineer II</h3>
+          <p class="muted">Noida, India · Apr 2026 – Oct 2026</p>
+          <p>Leading backend development for a high-scale performance-marketing platform. Upgraded production MongoDB from 3.6 to 7.0 with zero data loss, improving database performance by 50%. Designed caching, observability, and operational tooling. Drove code reviews and deployment processes.</p>
+        </article>
+
+        <article class="entry">
+          <h3>Trackier — Software Engineer</h3>
+          <p class="muted">Remote · Dec 2022 – Mar 2026</p>
+          <p>Built and maintained backend services and API features across PHP, Go, Node.js, MongoDB, Redis, and ClickHouse. Led resolution of critical production issues. Automated operational workflows, reducing manual effort and mean time to resolution.</p>
+        </article>
+
+        <article class="entry">
+          <h3>Byju's — Software Engineer</h3>
+          <p class="muted">Remote · Jul 2022 – Nov 2022</p>
+          <p>Backend systems for interactive learning with the In-Class Experience team. Event-driven workflows and Kafka streams for the Suggestions Engine. CI/CD pipelines for AWS Lambda deployments.</p>
+        </article>
+      </section>
+
+      <section id="projects">
+        <h2><span class="path">~/projects</span></h2>
+
+        <article class="entry">
+          <h3>topd</h3>
+          <p class="muted">Nov 2026 – present · Swift 5.10, SwiftUI, AppKit, SMAppService</p>
+          <p>htop for macOS, without opening a window. A native menu bar system monitor with live CPU, memory, GPU, storage, and network cards. Idle CPU stays under 0.2%.</p>
+          <p class="links">
+            <a href="https://github.com/arshalsoren/topd" target="_blank" rel="noopener noreferrer">GitHub</a> ·
+            <a href="https://arshalsoren.github.io/topd/" target="_blank" rel="noopener noreferrer">Project site</a>
+          </p>
+        </article>
+
+        <h3 class="group">Ongoing</h3>
+
+        <article class="entry">
+          <h3>soviq</h3>
+          <p>A reader for Lemmy, Mastodon, Bluesky, and blogs that keeps discussions intact and keeps your setup on your own device.</p>
+        </article>
+
+        <article class="entry">
+          <h3>webhook service</h3>
+          <p>Reliable receiving, verification, and delivery of webhooks.</p>
+        </article>
+      </section>
+
+      <section id="skills">
+        <h2><span class="path">~/skills</span></h2>
+        <dl class="skills">
+          <dt>Languages</dt><dd>Go, JavaScript, TypeScript, PHP, C++, Python, Swift</dd>
+          <dt>Backend</dt><dd>Node.js, Express.js, REST APIs, microservices, gRPC, event-driven architecture</dd>
+          <dt>Databases</dt><dd>MongoDB, ClickHouse, PostgreSQL, Redis, Memcached</dd>
+          <dt>Cloud / DevOps</dt><dd>Google Cloud, AWS, Docker, Kubernetes, Jenkins, Terraform</dd>
+          <dt>Tools</dt><dd>Kafka, Git, Linux, CI/CD, observability</dd>
+        </dl>
+      </section>
+
+      <section id="education">
+        <h2><span class="path">~/education</span></h2>
+        <article class="entry">
+          <h3>Bachelor of Technology, Computer Science and Engineering</h3>
+          <p class="muted">Birla Institute of Technology, Mesra · 2018 – 2022 · Ranchi, India</p>
+        </article>
+      </section>
+
+      <section id="contact">
+        <h2><span class="path">~/contact</span></h2>
+        <p>Send a message. It opens in your mail app, addressed to me.</p>
+
+        <form id="contact-form" class="contact-form">
+          <label>
+            <span>Your name</span>
+            <input name="name" type="text" autocomplete="name" required>
+          </label>
+          <label>
+            <span>Your email (so I can reply)</span>
+            <input name="email" type="email" autocomplete="email" required>
+          </label>
+          <label>
+            <span>Message</span>
+            <textarea name="message" rows="5" required></textarea>
+          </label>
+          <button type="submit">Send message</button>
+        </form>
+
+        <p class="links">
+          <a href="mailto:arshalsoren@gmail.com">arshalsoren@gmail.com</a> ·
+          <a href="https://linkedin.com/in/arshalsoren" target="_blank" rel="noopener noreferrer">LinkedIn</a> ·
+          <a href="https://github.com/sponsors/arshalsoren" target="_blank" rel="noopener noreferrer">GitHub Sponsors</a> ·
+          <a href="arshal-soren-resume.pdf">Resume (PDF)</a>
+        </p>
+      </section>
     </div>
 
-    <form id="prompt" class="prompt" autocomplete="off">
-      <label for="cmd" class="ps1">arshal@soren:~$</label>
-      <input id="cmd" name="cmd" type="text" autocapitalize="off" autocorrect="off" spellcheck="false" autofocus aria-label="Command">
-    </form>
+    <footer class="footer">
+      <a href="#top">back to top</a>
+    </footer>
   </main>
 
   <script src="script.js"></script>
