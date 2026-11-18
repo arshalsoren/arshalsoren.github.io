@@ -32,45 +32,21 @@ a:focus-visible {
 }
 
 .muted { color: var(--muted); }
+.err { color: var(--red); }
+.sys { color: var(--muted); }
 
 .term {
-  padding: 0 clamp(16px, 4vw, 56px);
+  padding: 6vh clamp(16px, 4vw, 56px) 0;
 }
 
-.boot {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-}
-.boot-line {
-  color: var(--red);
-  margin: 0;
-}
-
-/* each scripted command is a block: the command line is pinned above the
-   middle of the screen while it runs */
-.stage {
-  padding: 8vh 0 6vh;
-  background: var(--bg);
-}
-
-.run-space { height: 0; }
-
-.js-live .stage {
-  position: sticky;
-  top: 22vh;
-}
-.js-live .run-space { height: 90vh; }
-
-.cmd {
-  white-space: pre-wrap;
-  margin-bottom: 16px;
-  min-height: 1.6em;
-}
 .ps1 { color: var(--red); }
-.typed { color: var(--fg); }
 
-.cmd.typing::after,
+.cmd-line {
+  white-space: pre-wrap;
+  margin: 0 0 12px;
+}
+.cmd-line .typed { color: var(--fg); }
+
 .cmd-line.typing::after {
   content: "▌";
   color: var(--red);
@@ -80,20 +56,27 @@ a:focus-visible {
   50% { opacity: 0; }
 }
 
+/* one block per command: its line, then its output */
+.block {
+  margin: 0 0 30px;
+}
+
 .out .name {
   font-weight: 700;
   margin: 0 0 8px;
 }
 
-h3 {
+.out h3 {
   font-size: inherit;
   font-weight: 700;
   margin: 0;
 }
 
-.entry { margin: 0 0 22px; }
-.entry:last-child { margin-bottom: 0; }
-.entry p:last-child { margin-bottom: 0; }
+.out .entry { margin: 0 0 20px; }
+.out .entry:last-child { margin-bottom: 0; }
+.out .entry p:last-child { margin-bottom: 0; }
+
+.out .line { margin: 0; white-space: pre-wrap; }
 
 .skills {
   display: grid;
@@ -160,19 +143,15 @@ h3 {
   outline: none;
 }
 
-/* the live prompt at the end of the session */
-.session {
-  padding: 8vh 0 12vh;
-}
-
-.cmd-line {
-  display: flex;
+/* the live prompt: always the last line, typed output lands above it */
+.prompt {
+  margin: 0 0 0;
   align-items: baseline;
   gap: 10px;
-  margin: 0;
+  display: flex;
 }
-.cmd-line .ps1 { white-space: nowrap; }
-.cmd-line input {
+.prompt .ps1 { white-space: nowrap; }
+.prompt input {
   flex: 1;
   min-width: 0;
   background: transparent;
@@ -184,13 +163,8 @@ h3 {
   padding: 0;
 }
 
-.log {
-  margin-top: 14px;
-  white-space: pre-wrap;
-}
-.log .line-in { color: var(--fg); }
-.log .err { color: var(--red); }
-.log .sys { color: var(--muted); }
+/* spare screen below the prompt so the last block can scroll to the top */
+.end { height: 60vh; }
 
 /* scroll-linked reveal: only when the script adds .js-live */
 .js-live .out > * {
