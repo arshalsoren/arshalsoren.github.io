@@ -22,6 +22,7 @@
   const TYPE_SHARE = 0.5; // share of a command's scroll run spent typing it
   const RUN = 0.6;        // scroll run per command, as a share of the screen height
   const START = 0.9;      // a command starts typing when its line is this far down the screen
+  const BLOCK_GAP = 30;   // the .block bottom margin in styles.css
 
   const stream = document.getElementById("stream");
   const form = document.getElementById("cmd-form");
@@ -52,6 +53,7 @@
   // Set the typed text and which output lines are visible for a given progress.
   function render(block) {
     const p = block.progress;
+    block.classList.toggle("started", p > 0);
     const typed = block.querySelector(".typed");
     const line = block.querySelector(".cmd-line");
     const cmd = block.dataset.cmd;
@@ -70,6 +72,9 @@
     block.progress = block.dataset.played ? 1 : 0;
     render(block);
   }
+  // Only one prompt waits for input at a time: the live prompt stays hidden
+  // until the scripted commands have all run.
+  if (!reduceMotion && scripted.some((b) => b.progress < 1)) form.hidden = true;
   // The first command is already run; it needs no scroll.
   for (const block of allBlocks()) {
     if (block.dataset.played) {
@@ -82,26 +87,55 @@
     scripted.forEach((b) => { b.progress = 1; render(b); });
   } else {
     document.documentElement.classList.add("js-live");
+    // Each command gets a run's worth of scroll room after it, so the next
+    // command only reaches the lower part of the screen once this one is done.
+    const runSpaces = scripted.map((b) => {
+      const space = document.createElement("div");
+      space.className = "run-space";
+      space.setAttribute("aria-hidden", "true");
+      b.after(space);
+      return space;
+    });
+    const sizeRunSpaces = () => {
+      const room = window.innerHeight * RUN;
+      scripted.forEach((b, i) => {
+        runSpaces[i].style.height = `${Math.max(0, room - b.offsetHeight - BLOCK_GAP)}px`;
+      });
+    };
+    sizeRunSpaces();
+    window.addEventListener("resize", sizeRunSpaces);
   }
 
   // A command's run starts once its line has scrolled to START of the way down
   // the screen, and lasts RUN of a screen height of scrolling. If the line is
   // already that high on the page, the run starts at the top of the page, so
-  // the first scroll moves it. Progress never goes back.
+  // the first scroll moves it. A command also waits for the one above it to
+  // finish. Progress never goes back.
   function update() {
     queued = false;
     if (reduceMotion) return;
     const span = window.innerHeight * RUN;
+    let previousEnd = 0; // one command at a time: each waits for the one above it
     for (const block of scripted) {
-      if (block.progress >= 1) continue;
       const docTop = block.querySelector(".cmd-line").getBoundingClientRect().top + window.scrollY;
-      const runStart = Math.max(0, docTop - window.innerHeight * START);
+      const runStart = Math.max(0, docTop - window.innerHeight * START, previousEnd);
+      block.runStartY = runStart;
+      previousEnd = runStart + span;
+      if (block.progress >= 1) continue;
       const p = clamp((window.scrollY - runStart) / span, 0, 1);
       if (p > block.progress) {
         block.progress = p;
         render(block);
       }
     }
+    if (scripted.every((b) => b.progress >= 1)) form.hidden = false;
+
+    // Make the page long enough to scroll through every queued run, so the last
+    // command can finish and the live prompt can appear.
+    const spacer = document.querySelector(".end");
+    const rest = document.documentElement.scrollHeight - spacer.offsetHeight;
+    const needed = previousEnd + window.innerHeight - rest;
+    spacer.style.height = `${Math.max(window.innerHeight * 0.6, needed)}px`;
   }
 
   let queued = false;

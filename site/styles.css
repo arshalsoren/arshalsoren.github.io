@@ -143,7 +143,8 @@ a:focus-visible {
   outline: none;
 }
 
-/* the live prompt: always the last line, typed output lands above it */
+/* the live prompt: the only prompt waiting for input, always last.
+   It appears once the scripted commands have finished (see script.js). */
 .prompt {
   margin: 0 0 0;
   align-items: baseline;
@@ -167,12 +168,14 @@ a:focus-visible {
 .end { height: 60vh; }
 
 /* scroll-linked reveal: only when the script adds .js-live */
-.js-live .out > * {
-  opacity: 0;
-  transition: opacity 0.25s ease;
+/* unrevealed output keeps its place (so scroll positions stay put) but is not shown */
+.js-live .out > :not(.shown) {
+  visibility: hidden;
 }
-.js-live .out > .shown {
-  opacity: 1;
+
+/* a command's line is not shown until it starts typing; its space is kept */
+.js-live .block:not(.started) .cmd-line {
+  visibility: hidden;
 }
 
 @media (max-width: 760px) {
