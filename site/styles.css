@@ -33,7 +33,6 @@ a:focus-visible {
 
 .muted { color: var(--muted); }
 
-/* the whole page is one terminal screen */
 .term {
   padding: 0 clamp(16px, 4vw, 56px);
 }
@@ -48,7 +47,8 @@ a:focus-visible {
   margin: 0;
 }
 
-/* each command is a block of its own: no borders, just lines of text */
+/* each scripted command is a block: the command line is pinned above the
+   middle of the screen while it runs */
 .stage {
   padding: 8vh 0 6vh;
   background: var(--bg);
@@ -56,7 +56,6 @@ a:focus-visible {
 
 .run-space { height: 0; }
 
-/* the command line is pinned above the middle of the screen while it runs */
 .js-live .stage {
   position: sticky;
   top: 22vh;
@@ -64,14 +63,15 @@ a:focus-visible {
 .js-live .run-space { height: 90vh; }
 
 .cmd {
-  white-space: pre;
+  white-space: pre-wrap;
   margin-bottom: 16px;
   min-height: 1.6em;
 }
 .ps1 { color: var(--red); }
 .typed { color: var(--fg); }
 
-.cmd.typing::after {
+.cmd.typing::after,
+.cmd-line.typing::after {
   content: "▌";
   color: var(--red);
   animation: blink 1s steps(1) infinite;
@@ -104,7 +104,7 @@ h3 {
 .skills dt { color: var(--red); }
 .skills dd { margin: 0; }
 
-/* contact: terminal input lines, no boxes */
+/* contact form: terminal input lines, no boxes */
 .contact-form {
   display: grid;
   gap: 12px;
@@ -117,9 +117,7 @@ h3 {
   gap: 12px;
   align-items: baseline;
 }
-.field-message {
-  align-items: flex-start;
-}
+.field-message { align-items: flex-start; }
 
 .field input,
 .field textarea {
@@ -162,7 +160,37 @@ h3 {
   outline: none;
 }
 
-.end { height: 60vh; }
+/* the live prompt at the end of the session */
+.session {
+  padding: 8vh 0 12vh;
+}
+
+.cmd-line {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 0;
+}
+.cmd-line .ps1 { white-space: nowrap; }
+.cmd-line input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  color: var(--fg);
+  border: 0;
+  outline: none;
+  font: inherit;
+  caret-color: var(--red);
+  padding: 0;
+}
+
+.log {
+  margin-top: 14px;
+  white-space: pre-wrap;
+}
+.log .line-in { color: var(--fg); }
+.log .err { color: var(--red); }
+.log .sys { color: var(--muted); }
 
 /* scroll-linked reveal: only when the script adds .js-live */
 .js-live .out > * {

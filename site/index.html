@@ -38,22 +38,6 @@
       <div class="run-space" aria-hidden="true"></div>
     </section>
 
-    <section class="step" id="skills" data-cmd="cat skills.yaml">
-      <div class="stage">
-        <div class="cmd"><span class="ps1">arshalsoren:~$ </span><span class="typed">cat skills.yaml</span></div>
-        <div class="out">
-          <dl class="skills">
-            <dt>languages</dt><dd>Go, JavaScript, TypeScript, PHP, C++, Python, Swift</dd>
-            <dt>backend</dt><dd>Node.js, Express.js, REST APIs, microservices, gRPC, event-driven architecture</dd>
-            <dt>databases</dt><dd>MongoDB, ClickHouse, PostgreSQL, Redis, Memcached</dd>
-            <dt>cloud/devops</dt><dd>Google Cloud, AWS, Docker, Kubernetes, Jenkins, Terraform</dd>
-            <dt>tools</dt><dd>Kafka, Git, Linux, CI/CD, observability</dd>
-          </dl>
-        </div>
-      </div>
-      <div class="run-space" aria-hidden="true"></div>
-    </section>
-
     <section class="step" id="experience" data-cmd="cat experience.log">
       <div class="stage">
         <div class="cmd"><span class="ps1">arshalsoren:~$ </span><span class="typed">cat experience.log</span></div>
@@ -115,6 +99,22 @@
       <div class="run-space" aria-hidden="true"></div>
     </section>
 
+    <section class="step" id="skills" data-cmd="cat skills.yaml">
+      <div class="stage">
+        <div class="cmd"><span class="ps1">arshalsoren:~$ </span><span class="typed">cat skills.yaml</span></div>
+        <div class="out">
+          <dl class="skills">
+            <dt>languages</dt><dd>Go, JavaScript, TypeScript, PHP, C++, Python, Swift</dd>
+            <dt>backend</dt><dd>Node.js, Express.js, REST APIs, microservices, gRPC, event-driven architecture</dd>
+            <dt>databases</dt><dd>MongoDB, ClickHouse, PostgreSQL, Redis, Memcached</dd>
+            <dt>cloud/devops</dt><dd>Google Cloud, AWS, Docker, Kubernetes, Jenkins, Terraform</dd>
+            <dt>tools</dt><dd>Kafka, Git, Linux, CI/CD, observability</dd>
+          </dl>
+        </div>
+      </div>
+      <div class="run-space" aria-hidden="true"></div>
+    </section>
+
     <section class="step" id="education" data-cmd="cat education.txt">
       <div class="stage">
         <div class="cmd"><span class="ps1">arshalsoren:~$ </span><span class="typed">cat education.txt</span></div>
@@ -158,7 +158,13 @@
       <div class="run-space" aria-hidden="true"></div>
     </section>
 
-    <div class="end" aria-hidden="true"></div>
+    <section class="session" id="session" aria-label="Type a command">
+      <form class="cmd-line" id="cmd-form" autocomplete="off">
+        <label for="cmd" class="ps1">arshalsoren:~$</label>
+        <input id="cmd" name="cmd" type="text" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Command">
+      </form>
+      <div id="log" class="log" role="log" aria-live="polite"></div>
+    </section>
   </main>
 
   <script src="script.js"></script>
