@@ -1,31 +1,23 @@
 :root {
   --bg: #0a0a0a;
-  --bar: #121212;
-  --line: #262626;
-  --field: #141414;
-  --fg: #f2f2f2;
-  --muted: #8c8c8c;
+  --fg: #d9d9d9;
+  --muted: #6f6f6f;
   --red: #ff3b30;
   --font: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 }
 
 * { box-sizing: border-box; }
 
-html {
-  scroll-behavior: smooth;
-  scroll-padding-top: 64px;
-}
-
 html, body {
   margin: 0;
   min-height: 100%;
   background: var(--bg);
   color: var(--fg);
-  font: 16px/1.7 var(--font);
+  font: 15px/1.6 var(--font);
   -webkit-text-size-adjust: 100%;
 }
 
-p { margin: 0 0 12px; }
+p { margin: 0 0 10px; }
 
 a {
   color: var(--fg);
@@ -41,64 +33,22 @@ a:focus-visible {
 
 .muted { color: var(--muted); }
 
-/* single full-screen terminal: one top bar, then the session */
-.topbar {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px 24px;
-  padding: 12px clamp(16px, 4vw, 64px);
-  background: var(--bar);
-  border-bottom: 1px solid var(--line);
-}
-
-.brand {
-  color: var(--red);
-  font-weight: 700;
-}
-
-.topbar nav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 18px;
-}
-.topbar nav a {
-  color: var(--muted);
-  text-decoration: none;
-}
-.topbar nav a:hover,
-.topbar nav a:focus-visible { color: var(--red); }
-
+/* the whole page is one terminal screen */
 .term {
-  padding: 0 clamp(16px, 4vw, 64px);
+  padding: 0 clamp(16px, 4vw, 56px);
 }
 
-/* first screen: waits for the reader to scroll */
 .boot {
-  min-height: calc(100vh - 49px);
+  min-height: 100vh;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 8px;
+  align-items: center;
 }
 .boot-line {
   color: var(--red);
-  font-size: clamp(20px, 3.4vw, 32px);
-  font-weight: 700;
   margin: 0;
 }
 
-/* each command is a block of its own, full width.
-   .stage is pinned to the middle of the screen while the command runs;
-   .run-space is the scroll distance that drives the run. Without JavaScript
-   (or with reduced motion) the stage is ordinary flow and run-space is 0. */
-.step {
-  border-top: 1px solid var(--line);
-}
-
+/* each command is a block of its own: no borders, just lines of text */
 .stage {
   padding: 8vh 0 6vh;
   background: var(--bg);
@@ -106,22 +56,17 @@ a:focus-visible {
 
 .run-space { height: 0; }
 
-/* The stage pins with its top at 22vh. Its 8vh top padding puts the command
-   line at about 30vh, above the middle, so the results below it fill the
-   middle of the screen. */
+/* the command line is pinned above the middle of the screen while it runs */
 .js-live .stage {
   position: sticky;
   top: 22vh;
 }
-
-.js-live .run-space {
-  height: 90vh;
-}
+.js-live .run-space { height: 90vh; }
 
 .cmd {
   white-space: pre;
-  margin-bottom: 18px;
-  min-height: 1.7em;
+  margin-bottom: 16px;
+  min-height: 1.6em;
 }
 .ps1 { color: var(--red); }
 .typed { color: var(--fg); }
@@ -135,127 +80,105 @@ a:focus-visible {
   50% { opacity: 0; }
 }
 
-.out h1 {
-  font-size: clamp(34px, 6vw, 72px);
-  line-height: 1.05;
-  letter-spacing: -0.02em;
-  margin: 0 0 18px;
+.out .name {
+  font-weight: 700;
+  margin: 0 0 8px;
 }
-
-.lead {
-  font-size: clamp(17px, 2vw, 22px);
-  max-width: 60ch;
-}
-
-.meta,
-.links { color: var(--muted); }
 
 h3 {
-  font-size: 18px;
-  margin: 0 0 2px;
+  font-size: inherit;
+  font-weight: 700;
+  margin: 0;
 }
 
-.entry { margin: 0 0 28px; }
+.entry { margin: 0 0 22px; }
 .entry:last-child { margin-bottom: 0; }
 .entry p:last-child { margin-bottom: 0; }
 
 .skills {
   display: grid;
   grid-template-columns: max-content 1fr;
-  gap: 10px 26px;
+  gap: 4px 20px;
   margin: 0;
-  max-width: 900px;
 }
 .skills dt { color: var(--red); }
 .skills dd { margin: 0; }
 
-/* contact form */
+/* contact: terminal input lines, no boxes */
 .contact-form {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin: 18px 0 22px;
-  max-width: 760px;
+  gap: 12px;
+  margin: 14px 0 16px;
+  max-width: 90ch;
 }
-.contact-form label {
-  display: grid;
-  gap: 6px;
-  color: var(--muted);
-  font-size: 13px;
-}
-.contact-form label.full { grid-column: 1 / -1; }
 
-.contact-form input,
-.contact-form textarea {
-  width: 100%;
-  background: var(--field);
-  color: var(--fg);
-  border: 1px solid var(--line);
-  border-radius: 0;
-  padding: 10px 12px;
-  font: inherit;
+.field {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
 }
-.contact-form textarea { resize: vertical; min-height: 140px; }
-.contact-form input:focus,
-.contact-form textarea:focus {
+.field-message {
+  align-items: flex-start;
+}
+
+.field input,
+.field textarea {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  color: var(--fg);
+  border: 0;
+  border-bottom: 1px solid #2a2a2a;
+  border-radius: 0;
+  padding: 2px 0;
+  font: inherit;
+  caret-color: var(--red);
+}
+.field textarea {
+  border: 1px solid #2a2a2a;
+  padding: 6px 8px;
+  resize: vertical;
+  min-height: 120px;
+}
+.field input:focus,
+.field textarea:focus {
   outline: none;
+  border-bottom-color: var(--red);
   border-color: var(--red);
 }
 
-.contact-form button {
+.send {
   justify-self: start;
-  background: var(--red);
-  color: #0a0a0a;
+  background: none;
   border: 0;
-  border-radius: 0;
-  padding: 10px 20px;
+  padding: 0;
+  color: var(--red);
   font: inherit;
-  font-weight: 700;
   cursor: pointer;
 }
-.contact-form button:hover { background: #ff5a50; }
-.contact-form button:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
-
-.end { height: 70vh; }
-
-.statusbar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px 18px;
-  padding: 10px clamp(16px, 4vw, 64px);
-  background: var(--bar);
-  border-top: 1px solid var(--line);
-  font-size: 14px;
+.send:hover,
+.send:focus-visible {
+  text-decoration: underline;
+  outline: none;
 }
-.statusbar .label {
-  background: var(--red);
-  color: #0a0a0a;
-  padding: 0 8px;
-  font-weight: 700;
-}
-.statusbar a { margin-left: auto; }
+
+.end { height: 60vh; }
 
 /* scroll-linked reveal: only when the script adds .js-live */
 .js-live .out > * {
   opacity: 0;
-  transform: translateY(4px);
-  transition: opacity 0.25s ease, transform 0.25s ease;
+  transition: opacity 0.25s ease;
 }
 .js-live .out > .shown {
   opacity: 1;
-  transform: none;
 }
 
 @media (max-width: 760px) {
-  .topbar { gap: 4px 16px; }
-  .contact-form { grid-template-columns: 1fr; }
-  .skills { grid-template-columns: 1fr; gap: 2px; }
-  .skills dt { margin-top: 10px; }
-  .statusbar a { margin-left: 0; }
+  .skills { grid-template-columns: 1fr; gap: 0; }
+  .skills dt { margin-top: 8px; }
+  .field { flex-direction: column; gap: 4px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
   * { animation: none !important; transition: none !important; }
 }

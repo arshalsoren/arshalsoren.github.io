@@ -3,24 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Arshal Soren — backend software engineer</title>
+  <title>arshalsoren — terminal</title>
   <meta name="description" content="Arshal Soren, backend software engineer. Experience, projects, skills, and contact.">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%230a0a0a'/%3E%3Ccircle cx='8' cy='8' r='5' fill='%23ff3b30'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header class="topbar" id="top">
-    <span class="brand">arshalsoren</span>
-    <nav aria-label="Sections">
-      <a href="#about">about</a>
-      <a href="#experience">experience</a>
-      <a href="#projects">projects</a>
-      <a href="#skills">skills</a>
-      <a href="#education">education</a>
-      <a href="#contact">contact</a>
-    </nav>
-  </header>
-
   <main class="term">
     <section class="boot" aria-label="Session">
       <p class="boot-line">welcome</p>
@@ -30,13 +18,10 @@
       <div class="stage">
         <div class="cmd"><span class="ps1">arshalsoren:~$ </span><span class="typed">whoami</span></div>
         <div class="out">
-          <h1>Arshal Soren</h1>
-          <p class="lead">Backend software engineer. I design, build, and operate scalable, high-availability services and APIs, and I care about the performance, reliability, and observability of distributed platforms.</p>
-          <p class="meta">
-            <a href="#contact">Contact</a> ·
-            <a href="arshal-soren-resume.pdf">Resume (PDF)</a> ·
-            <a href="https://github.com/arshalsoren" target="_blank" rel="noopener noreferrer">GitHub</a> ·
-            <a href="https://linkedin.com/in/arshalsoren" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <p class="name">Arshal Soren</p>
+          <p>Backend software engineer. I design, build, and operate scalable, high-availability services and APIs, and I care about the performance, reliability, and observability of distributed platforms.</p>
+          <p class="muted">
+            <a href="#contact">contact</a>  <a href="arshal-soren-resume.pdf">resume.pdf</a>  <a href="https://github.com/arshalsoren" target="_blank" rel="noopener noreferrer">github</a>  <a href="https://linkedin.com/in/arshalsoren" target="_blank" rel="noopener noreferrer">linkedin</a>
           </p>
         </div>
       </div>
@@ -58,11 +43,11 @@
         <div class="cmd"><span class="ps1">arshalsoren:~$ </span><span class="typed">cat skills.yaml</span></div>
         <div class="out">
           <dl class="skills">
-            <dt>Languages</dt><dd>Go, JavaScript, TypeScript, PHP, C++, Python, Swift</dd>
-            <dt>Backend</dt><dd>Node.js, Express.js, REST APIs, microservices, gRPC, event-driven architecture</dd>
-            <dt>Databases</dt><dd>MongoDB, ClickHouse, PostgreSQL, Redis, Memcached</dd>
-            <dt>Cloud / DevOps</dt><dd>Google Cloud, AWS, Docker, Kubernetes, Jenkins, Terraform</dd>
-            <dt>Tools</dt><dd>Kafka, Git, Linux, CI/CD, observability</dd>
+            <dt>languages</dt><dd>Go, JavaScript, TypeScript, PHP, C++, Python, Swift</dd>
+            <dt>backend</dt><dd>Node.js, Express.js, REST APIs, microservices, gRPC, event-driven architecture</dd>
+            <dt>databases</dt><dd>MongoDB, ClickHouse, PostgreSQL, Redis, Memcached</dd>
+            <dt>cloud/devops</dt><dd>Google Cloud, AWS, Docker, Kubernetes, Jenkins, Terraform</dd>
+            <dt>tools</dt><dd>Kafka, Git, Linux, CI/CD, observability</dd>
           </dl>
         </div>
       </div>
@@ -103,9 +88,8 @@
             <h3>topd</h3>
             <p class="muted">Nov 2026 – present · Swift 5.10, SwiftUI, AppKit, SMAppService</p>
             <p>htop for macOS, without opening a window. A native menu bar system monitor with live CPU, memory, GPU, storage, and network cards. Idle CPU stays under 0.2%.</p>
-            <p class="links">
-              <a href="https://github.com/arshalsoren/topd" target="_blank" rel="noopener noreferrer">GitHub</a> ·
-              <a href="https://arshalsoren.github.io/topd/" target="_blank" rel="noopener noreferrer">Project site</a>
+            <p class="muted">
+              <a href="https://github.com/arshalsoren/topd" target="_blank" rel="noopener noreferrer">github</a>  <a href="https://arshalsoren.github.io/topd/" target="_blank" rel="noopener noreferrer">site</a>
             </p>
           </article>
         </div>
@@ -148,29 +132,26 @@
       <div class="stage">
         <div class="cmd"><span class="ps1">arshalsoren:~$ </span><span class="typed">./contact --message</span></div>
         <div class="out">
-          <p>Send a message. It opens in your mail app, addressed to me.</p>
+          <p>Opens in your mail app, addressed to me.</p>
 
           <form id="contact-form" class="contact-form">
-            <label>
-              <span>Your name</span>
+            <label class="field">
+              <span class="ps1">name:</span>
               <input name="name" type="text" autocomplete="name" required>
             </label>
-            <label>
-              <span>Your email (so I can reply)</span>
+            <label class="field">
+              <span class="ps1">email:</span>
               <input name="email" type="email" autocomplete="email" required>
             </label>
-            <label class="full">
-              <span>Message</span>
+            <label class="field field-message">
+              <span class="ps1">message:</span>
               <textarea name="message" rows="5" required></textarea>
             </label>
-            <button type="submit">Send message</button>
+            <button type="submit" class="send">[ send ]</button>
           </form>
 
-          <p class="links">
-            <a href="mailto:arshalsoren@gmail.com">arshalsoren@gmail.com</a> ·
-            <a href="https://linkedin.com/in/arshalsoren" target="_blank" rel="noopener noreferrer">LinkedIn</a> ·
-            <a href="https://github.com/sponsors/arshalsoren" target="_blank" rel="noopener noreferrer">GitHub Sponsors</a> ·
-            <a href="arshal-soren-resume.pdf">Resume (PDF)</a>
+          <p class="muted">
+            <a href="mailto:arshalsoren@gmail.com">arshalsoren@gmail.com</a>  <a href="https://linkedin.com/in/arshalsoren" target="_blank" rel="noopener noreferrer">linkedin</a>  <a href="https://github.com/sponsors/arshalsoren" target="_blank" rel="noopener noreferrer">sponsor</a>  <a href="arshal-soren-resume.pdf">resume.pdf</a>
           </p>
         </div>
       </div>
@@ -179,12 +160,6 @@
 
     <div class="end" aria-hidden="true"></div>
   </main>
-
-  <footer class="statusbar">
-    <span class="label">arshalsoren</span>
-    <span class="muted">backend software engineer</span>
-    <a href="#top">back to top</a>
-  </footer>
 
   <script src="script.js"></script>
 </body>
