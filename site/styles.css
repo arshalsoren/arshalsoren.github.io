@@ -216,6 +216,34 @@ h3 {
 }
 .statusbar a { margin-left: auto; }
 
+/* terminal-style reveal (only when the script adds .js-anim) */
+.cmd {
+  color: var(--fg);
+  margin-bottom: 14px;
+  white-space: pre;
+  overflow-wrap: normal;
+}
+.cmd:empty { display: none; }
+.cmd .ps1 { color: var(--red); }
+.cmd.typing::after {
+  content: "▌";
+  color: var(--red);
+  animation: blink 1s steps(1) infinite;
+}
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+.js-anim .out > * {
+  opacity: 0;
+  transform: translateY(3px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.js-anim .out > .shown {
+  opacity: 1;
+  transform: none;
+}
+
 /* narrow screens: one column */
 @media (max-width: 760px) {
   .grid {
