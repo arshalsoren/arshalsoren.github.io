@@ -60,10 +60,12 @@
   function update() {
     queued = false;
     const vh = window.innerHeight;
-    const runStart = vh * 0.9; // run begins when the block reaches the lower part of the screen
-    const runEnd = vh * 0.2;   // and completes when it reaches the upper part
+    // The command starts typing as its line nears the middle of the screen and
+    // is complete, with its results, when it sits exactly in the middle.
+    const runStart = vh * 0.8;
+    const runEnd = vh * 0.5;
     for (const step of steps) {
-      const top = step.getBoundingClientRect().top;
+      const top = step.cursor.getBoundingClientRect().top;
       const p = clamp((runStart - top) / (runStart - runEnd), 0, 1);
       if (p > step.progress) step.progress = p;
       render(step);
