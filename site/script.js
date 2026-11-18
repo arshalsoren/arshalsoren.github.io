@@ -59,16 +59,17 @@
     });
   }
 
-  // The stage pins when the step's top edge passes the middle of the screen.
-  // The run then lasts for the step's run-space, so progress is how far the
-  // step has moved past the middle, measured against that run-space.
+  // The stage pins when the step's top edge reaches the pin line, 41% of the
+  // screen height (see .js-live .stage in styles.css). The run lasts for the
+  // step's run-space, so progress is how far the step has moved past the pin
+  // line, measured against that run-space.
   function update() {
     queued = false;
-    const middle = window.innerHeight * 0.5;
+    const pin = window.innerHeight * 0.41;
     for (const step of steps) {
       const top = step.getBoundingClientRect().top;
       const run = step.runSpace.offsetHeight;
-      const p = run > 0 ? clamp((middle - top) / run, 0, 1) : (top <= middle ? 1 : 0);
+      const p = run > 0 ? clamp((pin - top) / run, 0, 1) : (top <= pin ? 1 : 0);
       if (p > step.progress) step.progress = p;
       render(step);
     }

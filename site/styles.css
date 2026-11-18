@@ -106,9 +106,11 @@ a:focus-visible {
 
 .run-space { height: 0; }
 
+/* The stage pins with its top at 41vh. Its 8vh top padding puts the command
+   line at 50vh, the middle of the screen. */
 .js-live .stage {
   position: sticky;
-  top: 50vh;
+  top: 41vh;
 }
 
 .js-live .run-space {
