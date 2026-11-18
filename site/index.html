@@ -20,10 +20,14 @@
     </nav>
   </header>
 
-  <main class="grid">
-    <section class="panel wide intro" aria-labelledby="intro-title">
-      <h2 class="panel-title" id="intro-title">intro</h2>
-      <div class="cmd" data-cmd="whoami"></div>
+  <main class="term">
+    <section class="boot" aria-label="Session">
+      <p class="boot-line">arshalsoren session ready</p>
+      <p class="muted">scroll to run the commands ↓</p>
+    </section>
+
+    <section class="step" id="intro" data-cmd="whoami">
+      <div class="cmd"><span class="ps1">arshalsoren:~$ </span><span class="typed">whoami</span></div>
       <div class="out">
         <h1>Arshal Soren</h1>
         <p class="lead">Backend software engineer. I design, build, and operate scalable, high-availability services and APIs, and I care about the performance, reliability, and observability of distributed platforms.</p>
@@ -36,17 +40,15 @@
       </div>
     </section>
 
-    <section class="panel" id="about" aria-labelledby="about-title">
-      <h2 class="panel-title" id="about-title">about</h2>
-      <div class="cmd" data-cmd="cat about.txt"></div>
+    <section class="step" id="about" data-cmd="cat about.txt">
+      <div class="cmd"><span class="ps1">arshalsoren:~$ </span><span class="typed">cat about.txt</span></div>
       <div class="out">
         <p>Four years of backend work across PHP, Go, Node.js, and TypeScript, on systems that handle large daily traffic. I work closely with product and DevOps, and I like making systems easier to run: better caching, clearer observability, and less manual operations work.</p>
       </div>
     </section>
 
-    <section class="panel" id="skills" aria-labelledby="skills-title">
-      <h2 class="panel-title" id="skills-title">skills</h2>
-      <div class="cmd" data-cmd="cat skills.yaml"></div>
+    <section class="step" id="skills" data-cmd="cat skills.yaml">
+      <div class="cmd"><span class="ps1">arshalsoren:~$ </span><span class="typed">cat skills.yaml</span></div>
       <div class="out">
         <dl class="skills">
           <dt>Languages</dt><dd>Go, JavaScript, TypeScript, PHP, C++, Python, Swift</dd>
@@ -58,9 +60,8 @@
       </div>
     </section>
 
-    <section class="panel wide" id="experience" aria-labelledby="experience-title">
-      <h2 class="panel-title" id="experience-title">experience</h2>
-      <div class="cmd" data-cmd="cat experience.log"></div>
+    <section class="step" id="experience" data-cmd="cat experience.log">
+      <div class="cmd"><span class="ps1">arshalsoren:~$ </span><span class="typed">cat experience.log</span></div>
       <div class="out">
         <article class="entry">
           <h3>Trackier — Software Engineer II</h3>
@@ -82,9 +83,8 @@
       </div>
     </section>
 
-    <section class="panel" id="projects" aria-labelledby="projects-title">
-      <h2 class="panel-title" id="projects-title">projects</h2>
-      <div class="cmd" data-cmd="ls projects/"></div>
+    <section class="step" id="projects" data-cmd="ls projects/">
+      <div class="cmd"><span class="ps1">arshalsoren:~$ </span><span class="typed">ls projects/</span></div>
       <div class="out">
         <article class="entry">
           <h3>topd</h3>
@@ -98,9 +98,8 @@
       </div>
     </section>
 
-    <section class="panel" id="ongoing" aria-labelledby="ongoing-title">
-      <h2 class="panel-title" id="ongoing-title">ongoing</h2>
-      <div class="cmd" data-cmd="ls ongoing/"></div>
+    <section class="step" id="ongoing" data-cmd="ls ongoing/">
+      <div class="cmd"><span class="ps1">arshalsoren:~$ </span><span class="typed">ls ongoing/</span></div>
       <div class="out">
         <article class="entry">
           <h3>soviq</h3>
@@ -114,9 +113,8 @@
       </div>
     </section>
 
-    <section class="panel" id="education" aria-labelledby="education-title">
-      <h2 class="panel-title" id="education-title">education</h2>
-      <div class="cmd" data-cmd="cat education.txt"></div>
+    <section class="step" id="education" data-cmd="cat education.txt">
+      <div class="cmd"><span class="ps1">arshalsoren:~$ </span><span class="typed">cat education.txt</span></div>
       <div class="out">
         <article class="entry">
           <h3>Bachelor of Technology, Computer Science and Engineering</h3>
@@ -125,9 +123,8 @@
       </div>
     </section>
 
-    <section class="panel wide" id="contact" aria-labelledby="contact-title">
-      <h2 class="panel-title" id="contact-title">contact</h2>
-      <div class="cmd" data-cmd="./contact --message"></div>
+    <section class="step" id="contact" data-cmd="./contact --message">
+      <div class="cmd"><span class="ps1">arshalsoren:~$ </span><span class="typed">./contact --message</span></div>
       <div class="out">
         <p>Send a message. It opens in your mail app, addressed to me.</p>
 
@@ -155,6 +152,8 @@
         </p>
       </div>
     </section>
+
+    <div class="end" aria-hidden="true"></div>
   </main>
 
   <footer class="statusbar">

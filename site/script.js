@@ -19,49 +19,65 @@
     window.location.href = href;
   });
 
-  // Terminal-style reveal. When a panel scrolls into view, its command types
-  // itself out, then the output lines appear one after another. Visitors only
-  // scroll. Skipped with reduced motion; the content is already in the HTML.
+  // Scroll-linked session. Each command runs as its block moves up the screen:
+  // it types during the first half of the run, then its results appear one by
+  // one. Nothing moves unless the reader scrolls. Progress never goes back, so
+  // a reader who scrolls up again does not see the text disappear.
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const panels = [...document.querySelectorAll(".panel")].filter((p) => p.querySelector(".cmd"));
-  if (reduceMotion || !("IntersectionObserver" in window) || panels.length === 0) return;
+  const steps = [...document.querySelectorAll(".step")];
+  if (reduceMotion || steps.length === 0) return;
 
-  document.documentElement.classList.add("js-anim");
-  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  document.documentElement.classList.add("js-live");
 
-  async function run(panel) {
-    const cmd = panel.querySelector(".cmd");
-    const out = panel.querySelector(".out");
+  const TYPE_SHARE = 0.5; // share of the run spent typing the command
 
-    const prompt = document.createElement("span");
-    prompt.className = "ps1";
-    prompt.textContent = "arshalsoren:~$ ";
-    const typed = document.createElement("span");
-    cmd.append(prompt, typed);
-    cmd.classList.add("typing");
+  for (const step of steps) {
+    step.command = step.dataset.cmd;
+    step.typed = step.querySelector(".typed");
+    step.cursor = step.querySelector(".cmd");
+    step.items = [...step.querySelector(".out").children];
+    step.progress = 0;
+    step.typed.textContent = "";
+    step.items.forEach((el) => el.classList.remove("shown"));
+  }
 
-    for (const ch of cmd.dataset.cmd) {
-      typed.textContent += ch;
-      await sleep(35 + Math.random() * 45);
-    }
-    cmd.classList.remove("typing");
+  const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n));
 
-    await sleep(300);
-    for (const line of out.children) {
-      line.classList.add("shown");
-      await sleep(160);
+  function render(step) {
+    const p = step.progress;
+    const typing = clamp(p / TYPE_SHARE, 0, 1);
+    const chars = Math.floor(typing * step.command.length);
+    step.typed.textContent = step.command.slice(0, chars);
+    step.cursor.classList.toggle("typing", p > 0 && p < TYPE_SHARE);
+
+    const n = step.items.length;
+    step.items.forEach((el, k) => {
+      const threshold = TYPE_SHARE + ((1 - TYPE_SHARE) * k) / n;
+      el.classList.toggle("shown", p >= threshold);
+    });
+  }
+
+  function update() {
+    queued = false;
+    const vh = window.innerHeight;
+    const runStart = vh * 0.9; // run begins when the block reaches the lower part of the screen
+    const runEnd = vh * 0.2;   // and completes when it reaches the upper part
+    for (const step of steps) {
+      const top = step.getBoundingClientRect().top;
+      const p = clamp((runStart - top) / (runStart - runEnd), 0, 1);
+      if (p > step.progress) step.progress = p;
+      render(step);
     }
   }
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        if (!entry.isIntersecting) continue;
-        observer.unobserve(entry.target);
-        run(entry.target);
-      }
-    },
-    { threshold: 0.25 }
-  );
-  panels.forEach((panel) => observer.observe(panel));
+  let queued = false;
+  function schedule() {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(update);
+  }
+
+  window.addEventListener("scroll", schedule, { passive: true });
+  window.addEventListener("resize", schedule);
+  update();
 })();

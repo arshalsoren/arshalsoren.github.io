@@ -1,8 +1,7 @@
 :root {
   --bg: #0a0a0a;
-  --bar: #141414;
-  --panel-bg: #0a0a0a;
-  --line: #2a2a2a;
+  --bar: #121212;
+  --line: #262626;
   --field: #141414;
   --fg: #f2f2f2;
   --muted: #8c8c8c;
@@ -22,11 +21,11 @@ html, body {
   min-height: 100%;
   background: var(--bg);
   color: var(--fg);
-  font: 14px/1.65 var(--font);
+  font: 16px/1.7 var(--font);
   -webkit-text-size-adjust: 100%;
 }
 
-p { margin: 0 0 10px; }
+p { margin: 0 0 12px; }
 
 a {
   color: var(--fg);
@@ -40,7 +39,9 @@ a:focus-visible {
   outline: none;
 }
 
-/* top bar, like btop's menu row */
+.muted { color: var(--muted); }
+
+/* single full-screen terminal: one top bar, then the session */
 .topbar {
   position: sticky;
   top: 0;
@@ -48,8 +49,8 @@ a:focus-visible {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 6px 22px;
-  padding: 10px clamp(14px, 3vw, 28px);
+  gap: 6px 24px;
+  padding: 12px clamp(16px, 4vw, 64px);
   background: var(--bar);
   border-bottom: 1px solid var(--line);
 }
@@ -62,87 +63,87 @@ a:focus-visible {
 .topbar nav {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px 16px;
+  gap: 4px 18px;
 }
-
 .topbar nav a {
   color: var(--muted);
   text-decoration: none;
 }
 .topbar nav a:hover,
-.topbar nav a:focus-visible {
+.topbar nav a:focus-visible { color: var(--red); }
+
+.term {
+  padding: 0 clamp(16px, 4vw, 64px);
+}
+
+/* first screen: waits for the reader to scroll */
+.boot {
+  min-height: calc(100vh - 49px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+}
+.boot-line {
   color: var(--red);
-}
-
-/* panel grid: two columns on wide screens, wide panels span both */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 22px 18px;
-  padding: 28px clamp(14px, 3vw, 28px) 12px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-/* bordered panel, title sits in the top border */
-.panel {
-  position: relative;
-  min-width: 0;
-  border: 1px solid var(--line);
-  padding: 24px 18px 16px;
-  background: var(--panel-bg);
-}
-
-.wide { grid-column: 1 / -1; }
-
-.panel-title {
-  position: absolute;
-  top: -0.7em;
-  left: 14px;
-  margin: 0;
-  padding: 0 8px;
-  background: var(--panel-bg);
-  color: var(--red);
-  font-size: 14px;
+  font-size: clamp(20px, 3.4vw, 32px);
   font-weight: 700;
-  line-height: 1.2;
+  margin: 0;
 }
 
-h1 {
-  font-size: clamp(26px, 4.5vw, 38px);
-  line-height: 1.15;
-  margin: 4px 0 12px;
-  letter-spacing: -0.01em;
+/* each command is a block of its own, full width */
+.step {
+  padding: 8vh 0 6vh;
+  border-top: 1px solid var(--line);
+}
+
+.cmd {
+  white-space: pre;
+  margin-bottom: 18px;
+  min-height: 1.7em;
+}
+.ps1 { color: var(--red); }
+.typed { color: var(--fg); }
+
+.cmd.typing::after {
+  content: "▌";
+  color: var(--red);
+  animation: blink 1s steps(1) infinite;
+}
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+.out h1 {
+  font-size: clamp(34px, 6vw, 72px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin: 0 0 18px;
 }
 
 .lead {
-  font-size: 15px;
-  max-width: 64ch;
+  font-size: clamp(17px, 2vw, 22px);
+  max-width: 60ch;
 }
 
 .meta,
-.links,
-.muted {
-  color: var(--muted);
-}
+.links { color: var(--muted); }
 
 h3 {
-  font-size: 15px;
+  font-size: 18px;
   margin: 0 0 2px;
 }
 
-.entry {
-  margin: 0 0 20px;
-}
+.entry { margin: 0 0 28px; }
 .entry:last-child { margin-bottom: 0; }
 .entry p:last-child { margin-bottom: 0; }
 
-/* skills: a two-column key/value table */
 .skills {
   display: grid;
   grid-template-columns: max-content 1fr;
-  gap: 8px 20px;
+  gap: 10px 26px;
   margin: 0;
+  max-width: 900px;
 }
 .skills dt { color: var(--red); }
 .skills dd { margin: 0; }
@@ -151,15 +152,15 @@ h3 {
 .contact-form {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 14px 16px;
-  margin: 14px 0 18px;
+  gap: 16px;
+  margin: 18px 0 22px;
+  max-width: 760px;
 }
-
 .contact-form label {
   display: grid;
   gap: 6px;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 13px;
 }
 .contact-form label.full { grid-column: 1 / -1; }
 
@@ -170,12 +171,10 @@ h3 {
   color: var(--fg);
   border: 1px solid var(--line);
   border-radius: 0;
-  padding: 9px 10px;
+  padding: 10px 12px;
   font: inherit;
 }
-
-.contact-form textarea { resize: vertical; min-height: 120px; }
-
+.contact-form textarea { resize: vertical; min-height: 140px; }
 .contact-form input:focus,
 .contact-form textarea:focus {
   outline: none;
@@ -188,7 +187,7 @@ h3 {
   color: #0a0a0a;
   border: 0;
   border-radius: 0;
-  padding: 9px 18px;
+  padding: 10px 20px;
   font: inherit;
   font-weight: 700;
   cursor: pointer;
@@ -196,17 +195,17 @@ h3 {
 .contact-form button:hover { background: #ff5a50; }
 .contact-form button:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
 
-/* status bar at the bottom, like btop's footer row */
+.end { height: 70vh; }
+
 .statusbar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 6px 18px;
-  margin-top: 22px;
-  padding: 8px clamp(14px, 3vw, 28px);
+  padding: 10px clamp(16px, 4vw, 64px);
   background: var(--bar);
   border-top: 1px solid var(--line);
-  font-size: 13px;
+  font-size: 14px;
 }
 .statusbar .label {
   background: var(--red);
@@ -216,44 +215,22 @@ h3 {
 }
 .statusbar a { margin-left: auto; }
 
-/* terminal-style reveal (only when the script adds .js-anim) */
-.cmd {
-  color: var(--fg);
-  margin-bottom: 14px;
-  white-space: pre;
-  overflow-wrap: normal;
-}
-.cmd:empty { display: none; }
-.cmd .ps1 { color: var(--red); }
-.cmd.typing::after {
-  content: "▌";
-  color: var(--red);
-  animation: blink 1s steps(1) infinite;
-}
-@keyframes blink {
-  50% { opacity: 0; }
-}
-
-.js-anim .out > * {
+/* scroll-linked reveal: only when the script adds .js-live */
+.js-live .out > * {
   opacity: 0;
-  transform: translateY(3px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transform: translateY(4px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
 }
-.js-anim .out > .shown {
+.js-live .out > .shown {
   opacity: 1;
   transform: none;
 }
 
-/* narrow screens: one column */
 @media (max-width: 760px) {
-  .grid {
-    grid-template-columns: 1fr;
-    padding: 22px 12px 8px;
-  }
-  .wide { grid-column: auto; }
+  .topbar { gap: 4px 16px; }
   .contact-form { grid-template-columns: 1fr; }
   .skills { grid-template-columns: 1fr; gap: 2px; }
-  .skills dt { margin-top: 8px; }
+  .skills dt { margin-top: 10px; }
   .statusbar a { margin-left: 0; }
 }
 
