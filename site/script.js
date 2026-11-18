@@ -11,7 +11,7 @@
   };
   const HELP = [
     "commands:",
-    "  whoami | about | experience | projects | ongoing | skills | education | contact",
+    "  whoami | about | experience | projects | skills | education | resume | contact",
     "  ls                 list the sections",
     "  open <target>      github, linkedin, sponsor, topd, resume",
     "  resume             open the résumé PDF",
@@ -19,16 +19,19 @@
     "  help               show this list",
   ];
 
-  const TYPE_SHARE = 0.5; // share of a command's scroll run spent typing it
-  const RUN = 0.6;        // scroll run per command, as a share of the screen height
-  const START = 0.9;      // a command starts typing when its line is this far down the screen
-  const BLOCK_GAP = 30;   // the .block bottom margin in styles.css
+  const TYPE_MS = 55;      // delay per typed character
+  const RESULT_MS = 450;   // pause after each result appears
+  const GESTURE_GAP = 350; // scroll input this long after the last one starts a new step
+
+  // A reload starts at the top, where whoami is, instead of restoring a scroll position.
+  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+  window.scrollTo(0, 0);
 
   const stream = document.getElementById("stream");
   const form = document.getElementById("cmd-form");
   const input = document.getElementById("cmd");
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n));
+  const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   // Contact forms open the visitor's mail app with the message filled in.
   // Nothing is sent from this site. Works for the scripted form and any copy.
@@ -38,117 +41,169 @@
     event.preventDefault();
     const data = new FormData(f);
     const name = String(data.get("name") || "").trim();
-    const email = String(data.get("email") || "").trim();
     const message = String(data.get("message") || "").trim();
     const subject = `Message from ${name} via your portfolio`;
-    const body = `${message}\n\n— ${name} (${email})`;
+    const body = `${message}\n\n— ${name}`;
     window.location.href = `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   });
 
-  // ---- Scripted commands: scrolling types each one, then reveals its output ----
+  // ---- Scripted commands: each step types one command, then reveals its output ----
 
   const scripted = [...stream.querySelectorAll(".block[data-scripted]")];
   const allBlocks = () => [...stream.querySelectorAll(".block")];
+  // Copies of each section's output, taken before anything can be cleared, so
+  // typed commands like whoami or about still work after clear.
+  const library = new Map(allBlocks().map((b) => [
+    b.dataset.name,
+    [...b.querySelector(".out").children]
+      .filter((el) => !el.classList.contains("continue-row"))
+      .map((el) => el.cloneNode(true)),
+  ]));
+  let queue = [...scripted]; // commands not run yet, in order
+  let busy = false;          // a step is running
+  let skipping = false;      // skip intro was pressed: steps finish at once
+  let streamDone = false;    // help has run and the live prompt is waiting
+  let lastInput = -Infinity;
 
-  // Set the typed text and which output lines are visible for a given progress.
-  function render(block) {
-    const p = block.progress;
-    block.classList.toggle("started", p > 0);
+  function showAll(block) {
+    block.classList.add("started");
+    block.querySelector(".typed").textContent = block.dataset.cmd;
+    for (const el of block.querySelector(".out").children) el.classList.add("shown");
+  }
+
+  // whoami is already run: it shows in full on load.
+  stream.querySelectorAll(".block[data-played]").forEach(showAll);
+
+  if (reduceMotion) {
+    scripted.forEach(showAll);
+    queue = [];
+    streamDone = true;
+    stream.querySelectorAll(".continue-row").forEach((row) => row.remove());
+  } else {
+    document.documentElement.classList.add("js-live");
+    for (const block of scripted) block.querySelector(".typed").textContent = "";
+    // Only one prompt waits at a time: the next command, and the live prompt after help.
+    form.hidden = true;
+    if (queue[0]) queue[0].classList.add("ready");
+  }
+
+  // Keeps a command and its results in the middle of the screen once a result has
+  // crossed the middle. A block taller than the screen follows its newest line instead.
+  function keepInView(block) {
+    const shown = block.querySelectorAll(".out > .shown");
+    const newest = shown[shown.length - 1];
+    if (!newest) return;
+    const line = block.querySelector(".cmd-line").getBoundingClientRect();
+    const bottom = newest.getBoundingClientRect().bottom;
+    const mid = window.innerHeight / 2;
+    if (bottom <= mid) return;
+    const height = bottom - line.top;
+    const target = height > window.innerHeight * 0.8
+      ? Math.max(0, bottom - window.innerHeight * 0.9)
+      : line.top + height / 2 - mid;
+    if (Math.abs(target) > 1) window.scrollBy({ top: target, behavior: "smooth" });
+  }
+
+  // Runs one scripted command: types it, then reveals each result in turn.
+  async function play(block) {
+    busy = true;
+    block.classList.remove("ready");
+    block.classList.add("started");
     const typed = block.querySelector(".typed");
     const line = block.querySelector(".cmd-line");
     const cmd = block.dataset.cmd;
-    const typing = clamp(p / TYPE_SHARE, 0, 1);
-    typed.textContent = cmd.slice(0, Math.floor(typing * cmd.length));
-    line.classList.toggle("typing", p > 0 && p < TYPE_SHARE);
-
-    const items = [...block.querySelector(".out").children];
-    items.forEach((el, k) => {
-      const threshold = TYPE_SHARE + ((1 - TYPE_SHARE) * k) / items.length;
-      el.classList.toggle("shown", p >= threshold);
-    });
-  }
-
-  for (const block of scripted) {
-    block.progress = block.dataset.played ? 1 : 0;
-    render(block);
-  }
-  // Only one prompt waits for input at a time: the live prompt stays hidden
-  // until the scripted commands have all run.
-  if (!reduceMotion && scripted.some((b) => b.progress < 1)) form.hidden = true;
-  // The first command is already run; it needs no scroll.
-  for (const block of allBlocks()) {
-    if (block.dataset.played) {
-      block.progress = 1;
-      render(block);
+    typed.textContent = "";
+    line.classList.add("typing");
+    for (let i = 1; i <= cmd.length && !skipping; i++) {
+      typed.textContent = cmd.slice(0, i);
+      await wait(TYPE_MS);
     }
+    typed.textContent = cmd;
+    line.classList.remove("typing");
+    for (const el of block.querySelector(".out").children) {
+      el.classList.add("shown");
+      if (skipping) continue;
+      keepInView(block);
+      await wait(RESULT_MS);
+    }
+    busy = false;
   }
 
-  if (reduceMotion) {
-    scripted.forEach((b) => { b.progress = 1; render(b); });
-  } else {
-    document.documentElement.classList.add("js-live");
-    // Each command gets a run's worth of scroll room after it, so the next
-    // command only reaches the lower part of the screen once this one is done.
-    const runSpaces = scripted.map((b) => {
-      const space = document.createElement("div");
-      space.className = "run-space";
-      space.setAttribute("aria-hidden", "true");
-      b.after(space);
-      return space;
-    });
-    const sizeRunSpaces = () => {
-      const room = window.innerHeight * RUN;
-      scripted.forEach((b, i) => {
-        runSpaces[i].style.height = `${Math.max(0, room - b.offsetHeight - BLOCK_GAP)}px`;
-      });
-    };
-    sizeRunSpaces();
-    window.addEventListener("resize", sizeRunSpaces);
+  // Skip intro: finish whatever is running, show the rest at once, run help,
+  // and leave the live prompt ready at the bottom.
+  async function skipIntro() {
+    if (streamDone) return;
+    skipping = true;
+    while (busy) await wait(20);
+    if (streamDone) return;
+    while (queue.length) showAll(queue.shift());
+    const helpBlock = buildBlock("help", HELP.map((l) => makeLine(l, "line")));
+    stream.insertBefore(helpBlock, form);
+    showAll(helpBlock);
+    streamDone = true;
+    stream.querySelectorAll(".ready").forEach((b) => b.classList.remove("ready"));
+    stream.querySelectorAll(".continue-row").forEach((row) => row.remove());
+    form.hidden = false;
+    form.scrollIntoView({ block: "end", behavior: "smooth" });
+    input.focus({ preventScroll: true });
   }
 
-  // A command's run starts once its line has scrolled to START of the way down
-  // the screen, and lasts RUN of a screen height of scrolling. If the line is
-  // already that high on the page, the run starts at the top of the page, so
-  // the first scroll moves it. A command also waits for the one above it to
-  // finish. Progress never goes back.
-  function update() {
-    queued = false;
-    if (reduceMotion) return;
-    const span = window.innerHeight * RUN;
-    let previousEnd = 0; // one command at a time: each waits for the one above it
-    for (const block of scripted) {
-      const docTop = block.querySelector(".cmd-line").getBoundingClientRect().top + window.scrollY;
-      const runStart = Math.max(0, docTop - window.innerHeight * START, previousEnd);
-      block.runStartY = runStart;
-      previousEnd = runStart + span;
-      if (block.progress >= 1) continue;
-      const p = clamp((window.scrollY - runStart) / span, 0, 1);
-      if (p > block.progress) {
-        block.progress = p;
-        render(block);
+  // One step: run the next command. After the last one, help runs by itself
+  // and the live prompt waits for input.
+  async function advance() {
+    if (busy || streamDone) return;
+    if (queue.length) {
+      await play(queue.shift());
+      if (queue.length) {
+        queue[0].classList.add("ready");
+        return;
       }
     }
-    if (scripted.every((b) => b.progress >= 1)) form.hidden = false;
-
-    // Make the page long enough to scroll through every queued run, so the last
-    // command can finish and the live prompt can appear.
-    const spacer = document.querySelector(".end");
-    const rest = document.documentElement.scrollHeight - spacer.offsetHeight;
-    const needed = previousEnd + window.innerHeight - rest;
-    spacer.style.height = `${Math.max(window.innerHeight * 0.6, needed)}px`;
+    const helpBlock = buildBlock("help", HELP.map((l) => makeLine(l, "line")));
+    stream.insertBefore(helpBlock, form);
+    await play(helpBlock);
+    streamDone = true;
+    form.hidden = false;
+    input.focus({ preventScroll: true });
   }
 
-  let queued = false;
-  function schedule() {
-    if (queued) return;
-    queued = true;
-    requestAnimationFrame(update);
+  // A step starts on the first scroll after a pause, so one gesture runs one step.
+  function gesture() {
+    const now = performance.now();
+    const fresh = now - lastInput > GESTURE_GAP;
+    lastInput = now;
+    if (fresh) advance();
   }
-  // Nothing runs on load: progress only moves once the reader scrolls.
-  if (!reduceMotion) {
-    window.addEventListener("scroll", schedule, { passive: true });
-    window.addEventListener("resize", schedule);
-  }
+
+  // Until the stream is done, scrolling down runs the next step instead of moving the page.
+  // Scrolling up, and typing in fields, still work.
+  const inField = (target) => target.closest && target.closest("input,textarea,select,button");
+  window.addEventListener("wheel", (event) => {
+    if (streamDone || event.deltaY <= 0 || inField(event.target)) return;
+    event.preventDefault();
+    gesture();
+  }, { passive: false });
+
+  window.addEventListener("keydown", (event) => {
+    if (streamDone || inField(event.target)) return;
+    if (!["ArrowDown", "PageDown", " "].includes(event.key)) return;
+    event.preventDefault();
+    gesture();
+  });
+
+  let touchY = null;
+  window.addEventListener("touchstart", (event) => {
+    touchY = event.touches[0].clientY;
+  }, { passive: true });
+  window.addEventListener("touchmove", (event) => {
+    if (streamDone || touchY === null || inField(event.target)) return;
+    const y = event.touches[0].clientY;
+    const up = touchY - y;
+    touchY = y;
+    if (up <= 0) return;
+    event.preventDefault();
+    gesture();
+  }, { passive: false });
 
   // ---- Typed commands: each one adds a block above the prompt ----
 
@@ -159,10 +214,11 @@
     return div;
   }
 
-  // Adds a block above the prompt: the echoed command line, then its output.
-  function addBlock(cmdText, outputNodes) {
+  // Builds a block: the echoed command line, then its output. Output is not shown yet.
+  function buildBlock(cmdText, outputNodes) {
     const block = document.createElement("div");
     block.className = "block";
+    block.dataset.cmd = cmdText;
     const line = document.createElement("div");
     line.className = "cmd-line";
     const ps1 = document.createElement("span");
@@ -174,20 +230,31 @@
     line.append(ps1, typed);
     const out = document.createElement("div");
     out.className = "out";
-    for (const node of outputNodes) {
-      node.classList.add("shown");
-      out.appendChild(node);
-    }
+    for (const node of outputNodes) out.appendChild(node);
     block.append(line, out);
+    return block;
+  }
+
+  // Adds a typed command above the prompt, with its output shown at once.
+  function addBlock(cmdText, outputNodes) {
+    const block = buildBlock(cmdText, outputNodes);
+    block.classList.add("started"); // shows the echoed command line with its prompt
+    for (const el of block.querySelector(".out").children) el.classList.add("shown");
     stream.insertBefore(block, form);
     form.scrollIntoView({ block: "end", behavior: reduceMotion ? "auto" : "smooth" });
   }
 
   // Copies a scripted command's output, so typed commands show the same content.
+  // The continue button is left out: it only belongs to the stream.
   function outputOf(name) {
-    const source = scripted.find((b) => b.dataset.name === name) || allBlocks().find((b) => b.dataset.name === name);
-    if (!source) return null;
-    return [...source.querySelector(".out").children].map((el) => el.cloneNode(true));
+    const nodes = library.get(name);
+    return nodes ? nodes.map((el) => el.cloneNode(true)) : null;
+  }
+
+  // Opens a link in a new tab after the "opening" line has had time to show.
+  const OPEN_DELAY = 750;
+  function openAfterMessage(url) {
+    setTimeout(() => window.open(url, "_blank", "noopener,noreferrer"), OPEN_DELAY);
   }
 
   function run(raw) {
@@ -210,8 +277,8 @@
       return;
     }
     if (cmd === "resume") {
-      window.open(LINKS.resume, "_blank", "noopener,noreferrer");
       addBlock(trimmed, [makeLine("opening resume.pdf", "sys")]);
+      openAfterMessage(LINKS.resume);
       return;
     }
     if (cmd === "open") {
@@ -220,11 +287,12 @@
         addBlock(trimmed, [makeLine(`usage: open <${Object.keys(LINKS).join("|")}>`, "err")]);
         return;
       }
-      window.open(LINKS[key], "_blank", "noopener,noreferrer");
       addBlock(trimmed, [makeLine(`opening ${key}`, "sys")]);
+      openAfterMessage(LINKS[key]);
       return;
     }
-    const output = outputOf(cmd);
+    // "get <section>" prints that section, the same as typing its name.
+    const output = outputOf(cmd === "get" ? (args[0] || "").toLowerCase() : cmd);
     if (output) {
       addBlock(trimmed, output);
       return;
@@ -240,8 +308,18 @@
     run(value);
   });
 
+  // Continue buttons run the next step, the same as scrolling does.
   // Tapping the stream focuses the prompt, except on links and form fields.
+  // preventScroll: focusing the prompt must not jump the page to the bottom.
   stream.addEventListener("click", (event) => {
-    if (!event.target.closest("a,button,input,textarea,form")) input.focus();
+    if (event.target.closest(".continue")) {
+      advance();
+      return;
+    }
+    if (event.target.closest(".skip")) {
+      skipIntro();
+      return;
+    }
+    if (!event.target.closest("a,button,input,textarea,form")) input.focus({ preventScroll: true });
   });
 })();

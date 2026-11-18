@@ -1,12 +1,35 @@
+/* Dark system theme: GitHub Dark. Light system theme: GitHub Light (below). */
 :root {
-  --bg: #0a0a0a;
-  --fg: #d9d9d9;
-  --muted: #6f6f6f;
-  --red: #ff3b30;
+  color-scheme: dark;
+  --bg: #0d1117;
+  --fg: #e6edf3;
+  --muted: #8b949e;
+  --prompt: #3fb950;
+  --link: #58a6ff;
+  --err: #f85149;
+  --line: #30363d;
   --font: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 }
 
+@media (prefers-color-scheme: light) {
+  :root {
+    color-scheme: light;
+    --bg: #ffffff;
+    --fg: #1f2328;
+    --muted: #656d76;
+    --prompt: #1a7f37;
+    --link: #0969da;
+    --err: #cf222e;
+    --line: #d0d7de;
+  }
+}
+
 * { box-sizing: border-box; }
+
+::selection {
+  background: var(--fg);
+  color: var(--bg);
+}
 
 html, body {
   margin: 0;
@@ -22,24 +45,24 @@ p { margin: 0 0 10px; }
 a {
   color: var(--fg);
   text-decoration: underline;
-  text-decoration-color: var(--red);
+  text-decoration-color: var(--link);
   text-underline-offset: 3px;
 }
 a:hover,
 a:focus-visible {
-  color: var(--red);
+  color: var(--link);
   outline: none;
 }
 
 .muted { color: var(--muted); }
-.err { color: var(--red); }
+.err { color: var(--err); }
 .sys { color: var(--muted); }
 
 .term {
   padding: 6vh clamp(16px, 4vw, 56px) 0;
 }
 
-.ps1 { color: var(--red); }
+.ps1 { color: var(--prompt); }
 
 .cmd-line {
   white-space: pre-wrap;
@@ -47,9 +70,11 @@ a:focus-visible {
 }
 .cmd-line .typed { color: var(--fg); }
 
-.cmd-line.typing::after {
-  content: "▌";
-  color: var(--red);
+/* block cursor: a filled cell with the text colour, blinking like a terminal */
+.cmd-line.typing::after,
+.block.ready .cmd-line::after {
+  content: "\00a0";
+  background: var(--fg);
   animation: blink 1s steps(1) infinite;
 }
 @keyframes blink {
@@ -84,7 +109,7 @@ a:focus-visible {
   gap: 4px 20px;
   margin: 0;
 }
-.skills dt { color: var(--red); }
+.skills dt { color: var(--prompt); }
 .skills dd { margin: 0; }
 
 /* contact form: terminal input lines, no boxes */
@@ -109,14 +134,14 @@ a:focus-visible {
   background: transparent;
   color: var(--fg);
   border: 0;
-  border-bottom: 1px solid #2a2a2a;
+  border-bottom: 1px solid var(--line);
   border-radius: 0;
   padding: 2px 0;
   font: inherit;
-  caret-color: var(--red);
+  caret-color: var(--fg);
 }
 .field textarea {
-  border: 1px solid #2a2a2a;
+  border: 1px solid var(--line);
   padding: 6px 8px;
   resize: vertical;
   min-height: 120px;
@@ -124,8 +149,8 @@ a:focus-visible {
 .field input:focus,
 .field textarea:focus {
   outline: none;
-  border-bottom-color: var(--red);
-  border-color: var(--red);
+  border-bottom-color: var(--prompt);
+  border-color: var(--prompt);
 }
 
 .send {
@@ -133,12 +158,31 @@ a:focus-visible {
   background: none;
   border: 0;
   padding: 0;
-  color: var(--red);
+  color: var(--prompt);
   font: inherit;
   cursor: pointer;
 }
 .send:hover,
 .send:focus-visible {
+  text-decoration: underline;
+  outline: none;
+}
+
+/* the stream's continue button: runs the next command, like a scroll */
+.continue-row { margin: 14px 0 0; }
+.continue,
+.skip {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--prompt);
+  font: inherit;
+  cursor: pointer;
+}
+.continue:hover,
+.continue:focus-visible,
+.skip:hover,
+.skip:focus-visible {
   text-decoration: underline;
   outline: none;
 }
@@ -152,6 +196,8 @@ a:focus-visible {
   display: flex;
 }
 .prompt .ps1 { white-space: nowrap; }
+/* hidden keeps its space but not its focus or click target; display:flex would win over [hidden] */
+.prompt[hidden] { visibility: hidden; }
 .prompt input {
   flex: 1;
   min-width: 0;
@@ -160,7 +206,8 @@ a:focus-visible {
   border: 0;
   outline: none;
   font: inherit;
-  caret-color: var(--red);
+  caret-color: var(--fg);
+  caret-shape: block;
   padding: 0;
 }
 
@@ -174,7 +221,7 @@ a:focus-visible {
 }
 
 /* a command's line is not shown until it starts typing; its space is kept */
-.js-live .block:not(.started) .cmd-line {
+.js-live .block:not(.started):not(.ready) .cmd-line {
   visibility: hidden;
 }
 
