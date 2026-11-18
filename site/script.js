@@ -12,7 +12,10 @@
     sponsors: "https://github.com/sponsors/arshalsoren",
     topd: "https://github.com/arshalsoren/topd",
     site: "https://arshalsoren.github.io/topd/",
+    resume: "arshal-soren-resume.pdf",
   };
+
+  const EMAIL = "arshalsoren@gmail.com";
 
   const esc = (s) =>
     String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -30,6 +33,7 @@ projects      things I have built
 skills        languages, tools, and infrastructure
 education     degree
 contact       where to find me
+resume        download my resume (PDF)
 ls            list sections
 open &lt;name&gt;  open a link: ${Object.keys(LINKS).map(esc).join(", ")}
 clear         clear the screen</pre>`,
@@ -58,7 +62,14 @@ clear         clear the screen</pre>`,
       <div class="h">topd</div>
       <p class="muted">Nov 2026 – present · Swift 5.10, SwiftUI, AppKit, SMAppService</p>
       <p>htop for macOS, without opening a window. A native menu bar system monitor with live CPU, memory, GPU, storage, and network cards. Idle CPU stays under 0.2%.</p>
-      <p>${link("topd", "GitHub")} · ${link("site", "project site")}</p>`,
+      <p>${link("topd", "GitHub")} · ${link("site", "project site")}</p>
+
+      <div class="h">Ongoing</div>
+      <div class="h">soviq</div>
+      <p>A reader for Lemmy, Mastodon, Bluesky, and blogs that keeps discussions intact and keeps your setup on your own device.</p>
+
+      <div class="h">webhook service</div>
+      <p class="muted">Details coming soon.</p>`,
 
     skills: () => `
       <pre>Languages    Go, JavaScript, TypeScript, PHP, C++, Python, Swift
@@ -72,9 +83,13 @@ Tools        Kafka, Git, Linux, CI/CD, observability</pre>`,
       <p class="muted">Birla Institute of Technology, Mesra · 2018 – 2022 · Ranchi, India</p>`,
 
     contact: () => `
+      <p><a href="mailto:${EMAIL}">${EMAIL}</a></p>
       <p>${link("linkedin", "LinkedIn")}</p>
       <p>${link("github", "GitHub")}</p>
       <p>${link("sponsors", "GitHub Sponsors")}</p>`,
+
+    resume: () => `
+      <p>${link("resume", "Download my resume (PDF)")}</p>`,
 
     ls: () => `<pre>about/  experience/  projects/  skills/  education/  contact/</pre>`,
 
