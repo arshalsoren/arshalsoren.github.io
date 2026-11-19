@@ -9,15 +9,21 @@
     topd: "https://github.com/arshalsoren/topd",
     resume: "arshal-soren-resume.pdf",
   };
-  const HELP = [
-    "commands:",
-    "  whoami | about | experience | projects | skills | education | resume | contact",
-    "  ls                 list the sections",
-    "  open <target>      github, linkedin, sponsor, topd, resume",
-    "  resume             open the résumé PDF",
-    "  clear              clear this log",
-    "  help               show this list",
+  const COMMANDS = [
+    ["whoami", "who I am"],
+    ["about", "what I do"],
+    ["experience", "where I have worked"],
+    ["projects", "what I build"],
+    ["skills", "languages and tools"],
+    ["education", "where I studied"],
+    ["resume", "open the résumé PDF"],
+    ["contact", "send me a message"],
+    ["ls", "list the sections"],
+    ["open <target>", "github, linkedin, sponsor, topd, resume"],
+    ["clear", "clear this log"],
+    ["help", "show this list"],
   ];
+  const HELP = ["commands:", ...COMMANDS.map(([name, text]) => `  ${name.padEnd(19)}${text}`)];
 
   const TYPE_MS = 55;      // delay per typed character
   const RESULT_MS = 450;   // pause after each result appears
